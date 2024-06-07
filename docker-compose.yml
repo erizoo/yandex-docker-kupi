@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  database:
+    container_name: database_container
+    image: postgres:13-alpine
+    env_file:
+      - .env
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - internal
+
+  backend:
+    container_name: backend_container
+    build:
+      context: ./backend
+    env_file:
+      - .env
+    ports:
+      - "4000:4000"
+    depends_on:
+      - database
+    networks:
+      - internal
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}
+
+  frontend:
+    container_name: frontend_container
+    build:
+      context: ./frontend
+    env_file:
+      - .env
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  db_data:
