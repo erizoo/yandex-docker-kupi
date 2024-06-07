@@ -28,13 +28,16 @@ COPY --from=builder /app/package*.json ./
 RUN npm ci --omit=dev
 
 # Копируем директорию со сборкой приложения
-COPY --from=builder /app/dist ./dist/
+COPY --from=builder /app/dist ./dist
+
+# Копируем конфигурационный файл PM2
+COPY --from=builder /app/ecosystem.config.js ./
 
 # Удаляем исходные файлы и ненужные конфиги
 RUN rm -rf ./src
 
 # Экспонируем порт, который использует ваше приложение
-EXPOSE 3000
+EXPOSE 4000
 
 # Указываем команду для запуска приложения с помощью PM2
 CMD ["pm2-runtime", "start", "ecosystem.config.js"]

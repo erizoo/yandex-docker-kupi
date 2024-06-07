@@ -14,13 +14,13 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Production
-FROM nginx:1.23.1-alpine AS production
+FROM nginx:1.23.1-alpine
 
 # Копируем конфигурационный файл nginx
 COPY nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
 
 # Копируем билд фронтенда в nginx
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/build /usr/share/nginx/html
 
 # Экспонируем порт
 EXPOSE 80

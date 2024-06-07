@@ -10,6 +10,10 @@ services:
       - db_data:/var/lib/postgresql/data
     networks:
       - internal
+    environment:
+      - POSTGRES_PGDATA=${POSTGRES_PGDATA}
+    expose:
+      - "${POSTGRES_PORT:-5432}"
 
   backend:
     container_name: backend_container
@@ -23,8 +27,6 @@ services:
       - database
     networks:
       - internal
-    environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}
 
   frontend:
     container_name: frontend_container
